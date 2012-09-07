@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Swapper Demo - Basic</title>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<style>
+			html, body, div {
+				margin: 0;
+				padding: 0;
+			}
+			html, body {
+				font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+				-webkit-tap-highlight-color: rgba(0,0,0,0);
+				-webkit-user-select: none;
+				user-select: none;
+			}
+			.clear {
+				clear: both;
+			}
+
+			#transition-type {
+				display: block;
+				margin: 24px auto 0;
+				width: 160px;
+			}
+			#wrap {
+				position: relative;
+				z-index: 1000;
+				margin: 24px auto 0;
+				height: 240px;
+				width: 160px;
+				background: #E7E7E7;
+				-webkit-box-shadow: 0 1px 3px #777;
+				-moz-box-shadow: 0 1px 3px #777;
+				box-shadow: 0 1px 3px #777;
+				overflow: hidden;
+			}
+			#wrap .title {
+				position: relative;
+				z-index: 3000;
+				height: 23px;
+				width: 160px;
+				background: #3C3C3C;
+				box-shadow: 0 1px 3px #777;
+				color: #FFF;
+				font-size: 16px;
+				line-height: 23px;
+				text-align: center;
+				-webkit-transform: translate3d(0,0,0);
+				-moz-transform: translate3d(0,0,0);
+				-ms-transform: translate3d(0,0,0);
+				-o-transform: translate3d(0,0,0);
+				transform: translate3d(0,0,0);
+			}
+			#wrap .page {
+				position: relative;
+				z-index: 2000;
+				padding: 8px;
+				height: 201px;
+				width: 144px;
+				/*background: #E7E7E7;*/
+			}
+			.page.template {
+				display: none;
+			}
+			#wrap .page .page-number {}
+		</style>
+	</head>
+
+	<body>
+		<select id="transition-type">
+			<option value="left-right">slide-left/right</option>
+			<option value="up-down">slide-up/down</option>
+			<option value="explode">explode-in/out</option>
+			<option value="scale">scale-in/out</option>
+			<option value="rotate-left-right">rotate-left/right</option>
+		</select>
+
+		<div id="wrap">
+			<div class="title">Title bar</div>
+		</div>
+
+		<div class="page template">
+			Page <span class="page-number"></span><br>
+			Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis.
+		</div>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<script src="../swapper.js"></script>
+		<script>
+			(function (window, document, $) {
+				TRANSITIONS = {
+					'scale'             : [ 'scale-in'    , 'scale-out'    ],
+					'rotate-left-right' : [ 'rotate-left' , 'rotate-right' ],
+					'explode'           : [ 'explode-in'  , 'explode-out'  ],
+					'up-down'           : [ 'slide-up'    , 'slide-down'   ],
+					'left-right'        : [ 'slide-left'  , 'slide-right'  ]
+				};
+
+
+
+				var trans = $('#transition-type'),
+					wrap  = $('#wrap'),
+					page  = $('.page').detach().removeClass('template');
+
+				var page1 = page.clone();
+				page1.find('.page-number').text('1');
+
+				var page2 = page.clone();
+				page2.find('.page-number').text('2');
+
+				wrap.append(page1);
+
+
+
+				var currentPage = 1;
+
+				wrap.click(function () {
+					var transitions = TRANSITIONS[ trans.val() ];
+
+					if (currentPage === 1) {
+						currentPage = 2;
+						page1.swapper(page2, transitions[0]);
+					}
+					else {
+						currentPage = 1;
+						page2.swapper(page1, transitions[1]);
+					}
+				});
+			})(window, document, jQuery);
+		</script>
+	</body>
+</html>
