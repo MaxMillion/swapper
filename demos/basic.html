@@ -31,19 +31,17 @@
 				margin: 24px auto 0;
 				height: 240px;
 				width: 160px;
-				background: #E7E7E7;
-				-webkit-box-shadow: 0 1px 3px #777;
-				-moz-box-shadow: 0 1px 3px #777;
-				box-shadow: 0 1px 3px #777;
+				overflow: visible;
+			}
+			#wrap.overflow {
 				overflow: hidden;
 			}
 			#wrap .title {
 				position: relative;
-				z-index: 3000;
+				z-index: 2000;
 				height: 23px;
 				width: 160px;
 				background: #3C3C3C;
-				box-shadow: 0 1px 3px #777;
 				color: #FFF;
 				font-size: 16px;
 				line-height: 23px;
@@ -56,11 +54,15 @@
 			}
 			#wrap .page {
 				position: relative;
-				z-index: 2000;
+				z-index: 3000;
 				padding: 8px;
-				height: 201px;
-				width: 144px;
-				/*background: #E7E7E7;*/
+				height: 197px;
+				width: 140px;
+				background: #F0F0F0;
+				border: 2px solid #CCC;
+			}
+			#wrap.overflow .page {
+				z-index: 1999;
 			}
 			.page.template {
 				display: none;
@@ -73,9 +75,12 @@
 		<select id="transition-type">
 			<option value="left-right">slide-left/right</option>
 			<option value="up-down">slide-up/down</option>
-			<option value="explode">explode-in/out</option>
 			<option value="scale">scale-in/out</option>
+			<option value="explode">explode-in/out</option>
 			<option value="rotate-left-right">rotate-left/right</option>
+			<option value="cube-left-right">cube-left/right</option>
+			<option value="swap-left-right">swap-left/right</option>
+			<option value="fade">fade-in/out</option>
 		</select>
 
 		<div id="wrap">
@@ -92,8 +97,11 @@
 		<script>
 			(function (window, document, $) {
 				TRANSITIONS = {
+					'fade'              : [ 'fade'        , 'fade'         ],
 					'scale'             : [ 'scale-in'    , 'scale-out'    ],
 					'rotate-left-right' : [ 'rotate-left' , 'rotate-right' ],
+					'cube-left-right'   : [ 'cube-left'   , 'cube-right'   ],
+					'swap-left-right'   : [ 'swap-left'   , 'swap-right'   ],
 					'explode'           : [ 'explode-in'  , 'explode-out'  ],
 					'up-down'           : [ 'slide-up'    , 'slide-down'   ],
 					'left-right'        : [ 'slide-left'  , 'slide-right'  ]
@@ -118,17 +126,28 @@
 				var currentPage = 1;
 
 				wrap.click(function () {
-					var transitions = TRANSITIONS[ trans.val() ];
+					var transType   = trans.val(),
+						transitions = TRANSITIONS[transType];
+
+					switch (transType) {
+						case 'up-down':
+						case 'left-right':
+							wrap.addClass('overflow');
+					}
 
 					if (currentPage === 1) {
 						currentPage = 2;
-						page1.swapper(page2, transitions[0]);
+						page1.swapper(page2, transitions[0], removeOverflow);
 					}
 					else {
 						currentPage = 1;
-						page2.swapper(page1, transitions[1]);
+						page2.swapper(page1, transitions[1], removeOverflow);
 					}
 				});
+
+				function removeOverflow () {
+					wrap.removeClass('overflow');
+				}
 			})(window, document, jQuery);
 		</script>
 	</body>

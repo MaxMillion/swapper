@@ -30,59 +30,66 @@ var Swapper = function (window, document, Zepto, jQuery) {
 	var NO_TRANSFORM = 'translate3d(0,0,0)';
 
 	var transitions = {
+			'fade' : [
+				{ fade : true },
+				{ fade : true }
+			],
 			'scale-in' : [
-				{ transform : 'scale(0.01)'         ,
-				  fade      : true              },
-				{ transform : 'transform(0,0,0)' ,
-				  fade      : true               }
+				{ transform : 'scale(0.01)' },
+				{ fade      : true          }
 			],
 			'scale-out' : [
-				{ transform : 'transform(0,0,0)' ,
-				  fade      : true               },
-				{ transform : 'scale(0.01)'         ,
-				  fade      : true              }
+				{ fade      : true          },
+				{ transform : 'scale(0.01)' }
 			],
 			'rotate-left' : [
-				{ transform : 'translate3d(25%,0,300px)  rotateY(90deg)'  ,
-				  fade      : true                                        },
-				{ transform : 'translate3d(-25%,0,300px) rotateY(-90deg)' ,
-				  fade      : true                                        }
+				{ transform : 'rotateY(-180deg) perspective(360px)' , fade : true },
+				{ transform : 'rotateY( 180deg) perspective(360px)' , fade : true }
 			],
 			'rotate-right' : [
-				{ transform : 'translate3d(-25%,0,300px) rotateY(-90deg)' ,
-				  fade      : true                                        },
-				{ transform : 'translate3d(25%,0,300px)  rotateY(90deg)'  ,
-				  fade      : true                                        }
+				{ transform : 'rotateY( 180deg) perspective(360px)' , fade : true },
+				{ transform : 'rotateY(-180deg) perspective(360px)' , fade : true }
+			],
+			'cube-left' : [
+				{ transform : 'translate3d( 50%,0,0) rotateY(-90deg) perspective(360px)' },
+				{ transform : 'translate3d(-50%,0,0) rotateY( 90deg) perspective(360px)' }
+			],
+			'cube-right' : [
+				{ transform : 'translate3d(-50%,0,0) rotateY( 90deg) perspective(360px)' },
+				{ transform : 'translate3d( 50%,0,0) rotateY(-90deg) perspective(360px)' }
+			],
+			'swap-left' : [
+				{ transform : 'translate3d( 65%,0,0) rotateY( 90deg) perspective(360px)' },
+				{ transform : 'translate3d(-65%,0,0) rotateY(-90deg) perspective(360px)' }
+			],
+			'swap-right' : [
+				{ transform : 'translate3d(-65%,0,0) rotateY(-90deg) perspective(360px)' },
+				{ transform : 'translate3d( 65%,0,0) rotateY( 90deg) perspective(360px)' }
 			],
 			'explode-in' : [
-				{ transform : 'scale(1.5)'  ,
-				  fade      : true          },
-				{ transform : 'scale(0.67)' ,
-				  fade      : true          }
+				{ transform : 'scale(1.33)' , fade : true },
+				{ transform : 'scale(0.75)' , fade : true }
 			],
 			'explode-out' : [
-				{ transform : 'scale(0.67)' ,
-				  fade      : true          },
-				{ transform : 'scale(1.5)'  ,
-				  fade      : true          }
+				{ transform : 'scale(0.75)' , fade : true },
+				{ transform : 'scale(1.33)' , fade : true }
 			],
 			'slide-left'  : [
-				{ transform : 'translate3d(100%,0,0)'  },
+				{ transform : 'translate3d( 100%,0,0)' },
 				{ transform : 'translate3d(-100%,0,0)' }
 			],
 			'slide-right'  : [
 				{ transform : 'translate3d(-100%,0,0)' },
-				{ transform : 'translate3d(100%,0,0)'  }
+				{ transform : 'translate3d( 100%,0,0)' }
 			],
 			'slide-up'  : [
-				{ transform : 'translate3d(0,100%,0)'  },
+				{ transform : 'translate3d(0, 100%,0)' },
 				{ transform : 'translate3d(0,-100%,0)' }
 			],
 			'slide-down'  : [
 				{ transform : 'translate3d(0,-100%,0)' },
-				{ transform : 'translate3d(0,100%,0)'  }
+				{ transform : 'translate3d(0, 100%,0)' }
 			]
-			//TODO
 		},
 		easings     = {
 			'linear'      : 'linear'      ,
@@ -92,7 +99,6 @@ var Swapper = function (window, document, Zepto, jQuery) {
 			'ease-in-out' : 'ease-in-out' ,
 			'step-start'  : 'step-start'  ,
 			'step-end'    : 'step-end'
-			//TODO: add cubic-bezier-based easings
 		};
 
 
@@ -336,7 +342,7 @@ var Swapper = function (window, document, Zepto, jQuery) {
 
 
 		setTransform(elem1, NO_TRANSFORM );
-		setTransform(elem2, transition[0].transform);
+		setTransform(elem2, transition[0].transform || NO_TRANSFORM);
 
 		if ( transition[0].fade ) {
 			elem2.style.opacity = '0';
@@ -352,7 +358,7 @@ var Swapper = function (window, document, Zepto, jQuery) {
 			setTransition(elem2, cssTransition);
 
 			setTimeout(function () {
-				setTransform(elem1, transition[1].transform);
+				setTransform(elem1, transition[1].transform || NO_TRANSFORM);
 				setTransform(elem2, NO_TRANSFORM );
 
 				if ( transition[0].fade ) {
