@@ -67,26 +67,26 @@ var Swapper = function (window, document, Zepto, jQuery) {
 				{ transform : 'translate3d( 65%,0,0) rotateY( 90deg) perspective(360px)' }
 			],
 			'explode-in' : [
-				{ transform : 'scale(1.33)' , fade : true },
-				{ transform : 'scale(0.75)' , fade : true }
+				{ fade : true , transform : 'scale(1.25)' },
+				{ fade : true }
 			],
 			'explode-out' : [
-				{ transform : 'scale(0.75)' , fade : true },
-				{ transform : 'scale(1.33)' , fade : true }
+				{ fade : true },
+				{ fade : true , transform : 'scale(1.25)' }
 			],
-			'slide-left'  : [
+			'slide-left' : [
 				{ transform : 'translate3d( 100%,0,0)' },
 				{ transform : 'translate3d(-100%,0,0)' }
 			],
-			'slide-right'  : [
+			'slide-right' : [
 				{ transform : 'translate3d(-100%,0,0)' },
 				{ transform : 'translate3d( 100%,0,0)' }
 			],
-			'slide-up'  : [
+			'slide-up' : [
 				{ transform : 'translate3d(0, 100%,0)' },
 				{ transform : 'translate3d(0,-100%,0)' }
 			],
-			'slide-down'  : [
+			'slide-down' : [
 				{ transform : 'translate3d(0,-100%,0)' },
 				{ transform : 'translate3d(0, 100%,0)' }
 			]
@@ -230,7 +230,7 @@ var Swapper = function (window, document, Zepto, jQuery) {
 
 		switch (typeof options.transition) {
 			case 'string':
-				if ( !(options.transition in transitions) ) {
+				if (!(options.transition in transitions) && (options.transition !== 'instant')) {
 					throw TypeError(options.transition + ' is not a valid transition');
 				}
 				break;
@@ -320,17 +320,30 @@ var Swapper = function (window, document, Zepto, jQuery) {
 
 		removeNode(elem2);
 
+
+
+		if (options.transition === 'instant') {
+			insertAfter(elem2, elem1);
+			removeNode(elem1);
+			elem1._swapper = false;
+			elem2._swapper = false;
+			setTimeout(function () {
+				callback();
+			}, 0);
+			return;
+		}
+
+
+
 		var transition = transitions[options.transition || 'fade'],
 			easing     = easings[options.easing || 'ease-in-out'],
 			duration   = options.duration || 300;
-
-
 
 		insertAfter(elem2, elem1);
 
 		var bounds          = elem1.getBoundingClientRect(),
 			computedStyles1 = getStyles(elem1),
-			styles1         = getStyles(elem1, true);
+			styles1         = getStyles(elem1, true),
 			styles2         = getStyles(elem2, true);
 
 		elem2.style.position = 'fixed';
