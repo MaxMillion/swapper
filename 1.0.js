@@ -194,6 +194,7 @@ var Swapper = function (window, document, Zepto, jQuery) {
 		}
 
 		return {
+			display  : styles.display  ,
 			opacity  : styles.opacity  ,
 			top      : styles.top      ,
 			left     : styles.left     ,
@@ -343,14 +344,17 @@ var Swapper = function (window, document, Zepto, jQuery) {
 
 		var bounds          = elem1.getBoundingClientRect(),
 			computedStyles1 = getStyles(elem1),
+			computedStyles2 = getStyles(elem2),
 			styles1         = getStyles(elem1, true),
 			styles2         = getStyles(elem2, true);
 
-		elem2.style.position = 'fixed';
-		elem2.style.top      = bounds.top  + 'px';
-		elem2.style.left     = bounds.left + 'px';
-		elem2.style.height   = computedStyles1.height;
-		elem2.style.width    = computedStyles1.width;
+		if (computedStyles1.display !== 'none') {
+			elem2.style.position = 'fixed';
+			elem2.style.top      = bounds.top  + 'px';
+			elem2.style.left     = bounds.left + 'px';
+		}
+		elem2.style.height   = computedStyles2.height || computedStyles1.height;
+		elem2.style.width    = computedStyles2.width  || computedStyles1.width;
 
 
 
