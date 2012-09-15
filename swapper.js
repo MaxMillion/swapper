@@ -1,5 +1,5 @@
 var Swapper = function (window, document, Zepto, jQuery) {
-	var NO_TRANSFORM = 'translate3d(0,0,0)';
+	var NO_TRANSFORM = 'translate3d(0,0,0) scale(1)';
 
 	var transitions = {
 			'fade' : [
@@ -11,8 +11,9 @@ var Swapper = function (window, document, Zepto, jQuery) {
 				{}
 			],
 			'scale-out' : [
-				{ fade      : true          },
-				{ transform : 'scale(0.01)' }
+				{},
+				{ transform : 'scale(0.01)' },
+				true
 			],
 			'rotate-left' : [
 				{ transform : 'rotateY(-180deg) perspective(360px)' , fade : true },
@@ -43,12 +44,14 @@ var Swapper = function (window, document, Zepto, jQuery) {
 				{}
 			],
 			'explode-out' : [
-				{ fade : true },
-				{ transform : 'scale(1.25)' }
+				{},
+				{ fade : true , transform : 'scale(1.25)' },
+				true
 			],
 			'implode-in' : [
-				{ fade : true },
-				{ transform : 'scale(0.60)' }
+				{},
+				{ fade : true , transform : 'scale(0.60)' },
+				true
 			],
 			'implode-out' : [
 				{ fade : true , transform : 'scale(0.70)' },
@@ -69,6 +72,42 @@ var Swapper = function (window, document, Zepto, jQuery) {
 			'slide-down' : [
 				{ transform : 'translate3d(0,-100%,0)' },
 				{ transform : 'translate3d(0, 100%,0)' }
+			],
+			'slideon-left' : [
+				{ transform : 'translate3d(-100%,0,0)' },
+				{}
+			],
+			'slideoff-left' : [
+				{},
+				{ transform : 'translate3d(-100%,0,0)' },
+				true
+			],
+			'slideon-right' : [
+				{ transform : 'translate3d(100%,0,0)' },
+				{}
+			],
+			'slideoff-right' : [
+				{},
+				{ transform : 'translate3d(100%,0,0)' },
+				true
+			],
+			'slideon-up' : [
+				{ transform : 'translate3d(0,-100%,0)' },
+				{}
+			],
+			'slideoff-up' : [
+				{},
+				{ transform : 'translate3d(0,-100%,0)' },
+				true
+			],
+			'slideon-down' : [
+				{ transform : 'translate3d(0,100%,0)' },
+				{}
+			],
+			'slideoff-down' : [
+				{},
+				{ transform : 'translate3d(0,100%,0)' },
+				true
 			]
 		},
 		easings     = {
@@ -119,6 +158,10 @@ var Swapper = function (window, document, Zepto, jQuery) {
 		}
 
 		return false;
+	}
+
+	function insertBefore (newElem, targetElem) {
+		targetElem.parentNode.insertBefore(newElem, targetElem);
 	}
 
 	function insertAfter (newElem, targetElem) {
@@ -258,7 +301,7 @@ var Swapper = function (window, document, Zepto, jQuery) {
 		switch (typeof callback) {
 			case 'undefined':
 				callback = function () {};
-				// fall through
+				break;
 
 			case 'function':
 				break;
@@ -336,6 +379,10 @@ var Swapper = function (window, document, Zepto, jQuery) {
 		elem2.style.height   = computedStyles2.height || computedStyles1.height;
 		elem2.style.width    = computedStyles2.width  || computedStyles1.width;
 
+		if ( transition[2] ) {
+			insertBefore(elem2, elem1);
+		}
+
 
 
 		setTransform(elem1, NO_TRANSFORM );
@@ -366,13 +413,41 @@ var Swapper = function (window, document, Zepto, jQuery) {
 					elem1.style.opacity = '0';
 				}
 
-				setTimeout(cleanupElems, duration)
+				bindCleanup();
+				setTimeout(cleanupElems, duration + 300);
 			}, 0);
 		}, 0);
 
 
 
+		var cleanUpLock = false;
+
+		function bindCleanup () {
+			elem2.addEventListener('webkitTransitionEnd' , cleanupElems , false);
+			elem2.addEventListener('transitionend'       , cleanupElems , false);
+			elem2.addEventListener('oTransitionEnd'      , cleanupElems , false);
+			elem2.addEventListener('otransitionend'      , cleanupElems , false);
+			elem2.addEventListener('MSTransitionEnd'     , cleanupElems , false);
+			elem2.addEventListener('transitionend'       , cleanupElems , false);
+		}
+
+		function unbindCleanup () {
+			elem2.removeEventListener('webkitTransitionEnd' , cleanupElems);
+			elem2.removeEventListener('transitionend'       , cleanupElems);
+			elem2.removeEventListener('oTransitionEnd'      , cleanupElems);
+			elem2.removeEventListener('otransitionend'      , cleanupElems);
+			elem2.removeEventListener('MSTransitionEnd'     , cleanupElems);
+			elem2.removeEventListener('transitionend'       , cleanupElems);
+		}
+
 		function cleanupElems () {
+			if (cleanUpLock) {
+				return;
+			}
+			cleanUpLock = true;
+
+			unbindCleanup();
+
 			removeNode(elem1);
 
 			setTransition(elem1, '');
