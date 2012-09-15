@@ -54,7 +54,7 @@ var Swapper = function (window, document, Zepto, jQuery) {
 				true
 			],
 			'implode-out' : [
-				{ fade : true , transform : 'scale(0.70)' },
+				{ fade : true , transform : 'scale(0.80)' },
 				{}
 			],
 			'slide-left' : [
