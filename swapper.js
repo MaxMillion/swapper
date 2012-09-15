@@ -1,31 +1,3 @@
-/**
- * swapper.js v1.0
- * UI navigation and transition utility
- * Copyright (c) 2012 Kik Interactive, http://kik.com
- * Released under the MIT license
- *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following
- * conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- */
-
 var Swapper = function (window, document, Zepto, jQuery) {
 	var NO_TRANSFORM = 'translate3d(0,0,0)';
 
@@ -36,7 +8,7 @@ var Swapper = function (window, document, Zepto, jQuery) {
 			],
 			'scale-in' : [
 				{ transform : 'scale(0.01)' },
-				{ fade      : true          }
+				{}
 			],
 			'scale-out' : [
 				{ fade      : true          },
@@ -68,11 +40,19 @@ var Swapper = function (window, document, Zepto, jQuery) {
 			],
 			'explode-in' : [
 				{ fade : true , transform : 'scale(1.25)' },
-				{ fade : true }
+				{}
 			],
 			'explode-out' : [
 				{ fade : true },
-				{ fade : true , transform : 'scale(1.25)' }
+				{ transform : 'scale(1.25)' }
+			],
+			'implode-in' : [
+				{ fade : true },
+				{ transform : 'scale(0.60)' }
+			],
+			'implode-out' : [
+				{ fade : true , transform : 'scale(0.70)' },
+				{}
 			],
 			'slide-left' : [
 				{ transform : 'translate3d( 100%,0,0)' },
