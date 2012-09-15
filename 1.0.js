@@ -25,7 +25,6 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-
 var Swapper = function (window, document, Zepto, jQuery) {
 	var NO_TRANSFORM = 'translate3d(0,0,0)';
 
@@ -36,7 +35,7 @@ var Swapper = function (window, document, Zepto, jQuery) {
 			],
 			'scale-in' : [
 				{ transform : 'scale(0.01)' },
-				{ fade      : true          }
+				{}
 			],
 			'scale-out' : [
 				{ fade      : true          },
@@ -68,11 +67,19 @@ var Swapper = function (window, document, Zepto, jQuery) {
 			],
 			'explode-in' : [
 				{ fade : true , transform : 'scale(1.25)' },
-				{ fade : true }
+				{}
 			],
 			'explode-out' : [
 				{ fade : true },
-				{ fade : true , transform : 'scale(1.25)' }
+				{ transform : 'scale(1.25)' }
+			],
+			'implode-in' : [
+				{ fade : true },
+				{ transform : 'scale(0.60)' }
+			],
+			'implode-out' : [
+				{ fade : true , transform : 'scale(0.70)' },
+				{}
 			],
 			'slide-left' : [
 				{ transform : 'translate3d( 100%,0,0)' },
