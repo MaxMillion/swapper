@@ -75,6 +75,10 @@
 		<select id="transition-type">
 			<option value="left-right">slide-left/right</option>
 			<option value="up-down">slide-up/down</option>
+			<option value="slideon-left">slideon/off-left</option>
+			<option value="slideon-right">slideon/off-right</option>
+			<option value="slideon-up">slideon/off-up</option>
+			<option value="slideon-down">slideon/off-down</option>
 			<option value="scale">scale-in/out</option>
 			<option value="explode">explode-in/out</option>
 			<option value="implode">implode-out/in</option>
@@ -98,15 +102,19 @@
 		<script>
 			(function (window, document, $) {
 				TRANSITIONS = {
-					'fade'              : [ 'fade'        , 'fade'         ],
-					'scale'             : [ 'scale-in'    , 'scale-out'    ],
-					'rotate-left-right' : [ 'rotate-left' , 'rotate-right' ],
-					'cube-left-right'   : [ 'cube-left'   , 'cube-right'   ],
-					'swap-left-right'   : [ 'swap-left'   , 'swap-right'   ],
-					'explode'           : [ 'explode-in'  , 'explode-out'  ],
-					'implode'           : [ 'implode-out' , 'implode-in'   ],
-					'up-down'           : [ 'slide-up'    , 'slide-down'   ],
-					'left-right'        : [ 'slide-left'  , 'slide-right'  ]
+					'fade'              : [ 'fade'          , 'fade'           ],
+					'scale'             : [ 'scale-in'      , 'scale-out'      ],
+					'rotate-left-right' : [ 'rotate-left'   , 'rotate-right'   ],
+					'cube-left-right'   : [ 'cube-left'     , 'cube-right'     ],
+					'swap-left-right'   : [ 'swap-left'     , 'swap-right'     ],
+					'explode'           : [ 'explode-in'    , 'explode-out'    ],
+					'implode'           : [ 'implode-out'   , 'implode-in'     ],
+					'up-down'           : [ 'slide-up'      , 'slide-down'     ],
+					'left-right'        : [ 'slide-left'    , 'slide-right'    ],
+					'slideon-left'      : [ 'slideon-left'  , 'slideoff-left'  ],
+					'slideon-right'     : [ 'slideon-right' , 'slideoff-right' ],
+					'slideon-up'        : [ 'slideon-up'    , 'slideoff-up'    ],
+					'slideon-down'      : [ 'slideon-down'  , 'slideoff-down'  ]
 				};
 
 
@@ -134,6 +142,14 @@
 					switch (transType) {
 						case 'up-down':
 						case 'left-right':
+						case 'slideon-left':
+						case 'slideoff-left':
+						case 'slideon-right':
+						case 'slideoff-right':
+						case 'slideon-up':
+						case 'slideoff-up':
+						case 'slideon-down':
+						case 'slideoff-down':
 							wrap.addClass('overflow');
 					}
 
