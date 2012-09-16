@@ -31,7 +31,7 @@ var Swapper = function (window, document, Zepto, jQuery) {
 	var transitions = {
 			'fade' : [
 				{ fade : true },
-				{ fade : true }
+				{}
 			],
 			'scale-in' : [
 				{ transform : 'scale(0.01)' },
