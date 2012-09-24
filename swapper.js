@@ -1,5 +1,6 @@
 var Swapper = function (window, document, Zepto, jQuery) {
-	var NO_TRANSFORM = 'translate3d(0,0,0) scale(1)';
+	var NO_TRANSFORM = 'translate3d(0,0,0) scale(1)',
+		IS_ANDROID   = /\bandroid\b/i.test(navigator.userAgent);
 
 	var transitions = {
 			'fade' : [
@@ -423,7 +424,7 @@ var Swapper = function (window, document, Zepto, jQuery) {
 				}
 
 				bindCleanup();
-				setTimeout(cleanupElems, duration + 300);
+				setTimeout(cleanupElems, duration + (IS_ANDROID ? 300 : 0));
 			}, 0);
 		}, 0);
 
