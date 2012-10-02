@@ -90,9 +90,6 @@ Standalone Usage
 
 swapper.js has no external dependencies and will work perfectly fine as a standalone library.
 
-
-### Make elements clickable
-
 ```js
 // elem1 is an element in DOM
 // elem2 is an element not in DOM yet

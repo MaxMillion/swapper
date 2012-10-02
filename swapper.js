@@ -423,31 +423,45 @@ var Swapper = function (window, document, Zepto, jQuery) {
 					elem1.style.opacity = '0';
 				}
 
-				bindCleanup();
-				setTimeout(cleanupElems, duration + (IS_ANDROID ? 300 : 0));
+				if (transition[0].fade || (transition[0].transform && transition[0].transform !== NO_TRANSFORM)) {
+					transitionElem = elem2;
+					bindCleanup();
+				}
+				else if (transition[1].fade || (transition[1].transform && transition[1].transform !== NO_TRANSFORM)) {
+					transitionElem = elem1;
+					bindCleanup();
+				}
+				else {
+					setTimeout(cleanupElems, duration);
+				}
 			}, 0);
 		}, 0);
 
 
 
-		var cleanUpLock = false;
+		var cleanUpLock = false,
+			transitionElem;
 
 		function bindCleanup () {
-			elem2.addEventListener('webkitTransitionEnd' , cleanupElems , false);
-			elem2.addEventListener('transitionend'       , cleanupElems , false);
-			elem2.addEventListener('oTransitionEnd'      , cleanupElems , false);
-			elem2.addEventListener('otransitionend'      , cleanupElems , false);
-			elem2.addEventListener('MSTransitionEnd'     , cleanupElems , false);
-			elem2.addEventListener('transitionend'       , cleanupElems , false);
+			transitionElem.addEventListener('webkitTransitionEnd' , cleanupElems , false);
+			transitionElem.addEventListener('transitionend'       , cleanupElems , false);
+			transitionElem.addEventListener('oTransitionEnd'      , cleanupElems , false);
+			transitionElem.addEventListener('otransitionend'      , cleanupElems , false);
+			transitionElem.addEventListener('MSTransitionEnd'     , cleanupElems , false);
+			transitionElem.addEventListener('transitionend'       , cleanupElems , false);
 		}
 
 		function unbindCleanup () {
-			elem2.removeEventListener('webkitTransitionEnd' , cleanupElems);
-			elem2.removeEventListener('transitionend'       , cleanupElems);
-			elem2.removeEventListener('oTransitionEnd'      , cleanupElems);
-			elem2.removeEventListener('otransitionend'      , cleanupElems);
-			elem2.removeEventListener('MSTransitionEnd'     , cleanupElems);
-			elem2.removeEventListener('transitionend'       , cleanupElems);
+			transitionElem.removeEventListener('webkitTransitionEnd' , cleanupElems);
+			transitionElem.removeEventListener('transitionend'       , cleanupElems);
+			transitionElem.removeEventListener('oTransitionEnd'      , cleanupElems);
+			transitionElem.removeEventListener('otransitionend'      , cleanupElems);
+			transitionElem.removeEventListener('MSTransitionEnd'     , cleanupElems);
+			transitionElem.removeEventListener('transitionend'       , cleanupElems);
+		}
+
+		function beginCleanupCounter () {
+			bindCleanup();
 		}
 
 		function cleanupElems () {
