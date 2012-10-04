@@ -423,11 +423,11 @@ var Swapper = function (window, document, Zepto, jQuery) {
 					elem1.style.opacity = '0';
 				}
 
-				if (transition[0].fade || (transition[0].transform && transition[0].transform !== NO_TRANSFORM)) {
+				if ((computedStyles2.display !== 'none') && (transition[0].fade || (transition[0].transform && transition[0].transform !== NO_TRANSFORM))) {
 					transitionElem = elem2;
 					bindCleanup();
 				}
-				else if (transition[1].fade || (transition[1].transform && transition[1].transform !== NO_TRANSFORM)) {
+				else if ((computedStyles1.display !== 'none') && (transition[1].fade || (transition[1].transform && transition[1].transform !== NO_TRANSFORM))) {
 					transitionElem = elem1;
 					bindCleanup();
 				}
