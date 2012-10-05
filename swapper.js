@@ -470,7 +470,9 @@ var Swapper = function (window, document, Zepto, jQuery) {
 			}
 			cleanUpLock = true;
 
-			unbindCleanup();
+			if (transitionElem) {
+				unbindCleanup();
+			}
 
 			removeNode(elem1);
 
