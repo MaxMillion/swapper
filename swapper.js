@@ -1,6 +1,11 @@
 var Swapper = function (window, document, Zepto, jQuery) {
-	var NO_TRANSFORM = 'translate3d(0,0,0) scale(1)',
-		IS_ANDROID   = /\bandroid\b/i.test(navigator.userAgent);
+	var NO_TRANSFORM = 'translate3d(0,0,0) scale(1)';
+
+	var isIOS5 = false,
+		match;
+	if ((match = /\bCPU.*OS (\d+(_\d+)?)/i.exec(navigator.userAgent)) && (Math.floor(parseFloat( match[1] )) === 5)) {
+		isIOS5 = true;
+	}
 
 	var transitions = {
 			'fade' : [
@@ -382,7 +387,14 @@ var Swapper = function (window, document, Zepto, jQuery) {
 			styles2         = getStyles(elem2, true);
 
 		if (computedStyles1.display !== 'none') {
-			elem2.style.position = 'fixed';
+			if (isIOS5) {
+				// this is a hack to fix iOS5 positioning when its low on memory
+				// it may break layouts that dont take this into account
+				elem2.style.position = 'absolute';
+			}
+			else {
+				elem2.style.position = 'fixed';
+			}
 			elem2.style.top      = bounds.top  + 'px';
 			elem2.style.left     = bounds.left + 'px';
 		}
