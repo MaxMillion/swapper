@@ -1,7 +1,11 @@
 Swapper._swapper = function (os, isNode, isInDOM, insertBefore, insertAfter, removeNode, setTransform, setTransition, getStyles, transitions, easings, validate, window, document) {
-	var NO_TRANSFORM = 'translate3d(0,0,0) scale(1)';
+	var NO_TRANSFORM       = 'translate3d(0,0,0) scale(1)',
+		DEFAULT_TRANSITION = 'fade',
+		DEFAULT_EASING     = 'ease-in-out';
 
 	var isIOS5 = (os.ios && (Math.floor(os.version) === 5));
+
+
 
 	function swapper (elem1, elem2, options, callback) {
 		validate.element(elem1);
@@ -32,34 +36,81 @@ Swapper._swapper = function (os, isNode, isInDOM, insertBefore, insertAfter, rem
 
 		removeNode(elem2);
 
+		performSwap(elem1, elem2, options, function () {
+			elem1._swapper = false;
+			elem2._swapper = false;
+			callback();
+		});
+	}
 
 
+
+	function performSwap (elem1, elem2, options, callback) {
 		if (options.transition === 'instant') {
 			insertAfter(elem2, elem1);
 			removeNode(elem1);
-			elem1._swapper = false;
-			elem2._swapper = false;
-			setTimeout(function () {
-				callback();
-			}, 0);
+			callback();
 			return;
 		}
 
 
 
-		var transition = transitions[options.transition || 'fade'],
-			easing     = easings[options.easing || 'ease-in-out'],
+		var transition = transitions[options.transition || DEFAULT_TRANSITION],
+			easing     = easings[options.easing || DEFAULT_EASING],
 			duration   = options.duration || 300;
 
+		// do this first to get accurate style readings
 		insertAfter(elem2, elem1);
 
-		var bounds          = elem1.getBoundingClientRect(),
-			computedStyles1 = getStyles(elem1),
+		var computedStyles1 = getStyles(elem1),
 			computedStyles2 = getStyles(elem2),
 			styles1         = getStyles(elem1, true),
 			styles2         = getStyles(elem2, true);
 
-		if (computedStyles1.display !== 'none') {
+		if ( transition[2] ) {
+			insertBefore(elem2, elem1);
+		}
+
+		setInitialPosition(elem1, elem2, computedStyles1, computedStyles2);
+
+
+
+		setInitialTransforms(elem1, elem2, transition);
+
+		setTimeout(function () {
+			setSwapperTransitions(elem1, elem2, duration, easing);
+
+			setTimeout(function () {
+				setFinalTransforms(elem1, elem2, transition);
+
+				onTransitionEnd(
+					elem1, elem2,
+					computedStyles1, computedStyles2,
+					transition, duration,
+					function () {
+						removeNode(elem1);
+
+						removeSwapperTransitions(elem1, elem2, duration, easing);
+
+						setTimeout(function () {
+							restoreTransforms(elem1, elem2, styles1, styles2, transition);
+
+							restorePosition(elem1, elem2, styles1, styles2);
+
+							callback();
+						}, 0);
+					}
+				);
+			}, 0);
+		}, 0);
+	}
+
+
+
+	function setInitialPosition (elem1, elem2, styles1, styles2) {
+		var bounds = elem1.getBoundingClientRect();
+
+		if (styles1.display !== 'none') {
 			if (isIOS5) {
 				// this is a hack to fix iOS5 positioning when its low on memory
 				// it may break layouts that dont take this into account
@@ -71,122 +122,121 @@ Swapper._swapper = function (os, isNode, isInDOM, insertBefore, insertAfter, rem
 			elem2.style.top      = bounds.top  + 'px';
 			elem2.style.left     = bounds.left + 'px';
 		}
-		elem2.style.height   = computedStyles2.height || computedStyles1.height;
-		elem2.style.width    = computedStyles2.width  || computedStyles1.width;
 
-		if ( transition[2] ) {
-			insertBefore(elem2, elem1);
-		}
+		elem2.style.height   = styles2.height || styles1.height;
+		elem2.style.width    = styles2.width  || styles1.width;
+	}
+
+	function restorePosition (elem1, elem2, styles1, styles2) {
+		elem2.style.position = styles2.position;
+		elem2.style.top      = styles2.top;
+		elem2.style.left     = styles2.left;
+		elem2.style.height   = styles2.height;
+		elem2.style.width    = styles2.width;
+	}
 
 
 
-		setTransform(elem1, NO_TRANSFORM );
+	function setInitialTransforms (elem1, elem2, transition) {
+		setTransform(elem1, NO_TRANSFORM);
 		setTransform(elem2, transition[0].transform || NO_TRANSFORM);
 
 		if ( transition[0].fade ) {
 			elem2.style.opacity = '0';
 		}
-
 		if ( transition[1].fade ) {
 			elem1.style.opacity = '1';
 		}
+	}
 
-		setTimeout(function () {
-			var cssTransition = 'transform '+(duration/1000)+'s '+easing+', opacity '+(duration/1000)+'s '+easing;
-			setTransition(elem1, cssTransition);
-			setTransition(elem2, cssTransition);
+	function setFinalTransforms (elem1, elem2, transition) {
+		setTransform(elem1, transition[1].transform || NO_TRANSFORM);
+		setTransform(elem2, NO_TRANSFORM );
 
-			setTimeout(function () {
-				setTransform(elem1, transition[1].transform || NO_TRANSFORM);
-				setTransform(elem2, NO_TRANSFORM );
+		if ( transition[0].fade ) {
+			elem2.style.opacity = '1';
+		}
+		if ( transition[1].fade ) {
+			elem1.style.opacity = '0';
+		}
+	}
 
-				if ( transition[0].fade ) {
-					elem2.style.opacity = '1';
-				}
+	function restoreTransforms (elem1, elem2, styles1, styles2, transition) {
+		setTransform(elem1, '');
+		setTransform(elem2, '');
 
-				if ( transition[1].fade ) {
-					elem1.style.opacity = '0';
-				}
+		if ( transition[0].fade ) {
+			elem2.style.opacity = styles2.opacity;
+		}
 
-				if ((computedStyles2.display !== 'none') && (transition[0].fade || (transition[0].transform && transition[0].transform !== NO_TRANSFORM))) {
-					transitionElem = elem2;
-					bindCleanup();
-				}
-				else if ((computedStyles1.display !== 'none') && (transition[1].fade || (transition[1].transform && transition[1].transform !== NO_TRANSFORM))) {
-					transitionElem = elem1;
-					bindCleanup();
-				}
-				else {
-					setTimeout(cleanupElems, duration);
-				}
-			}, 0);
-		}, 0);
+		if ( transition[1].fade ) {
+			elem1.style.opacity = styles1.opacity;
+		}
+	}
 
 
 
-		var cleanUpLock = false,
-			transitionElem;
+	function setSwapperTransitions (elem1, elem2, duration, easing) {
+		var cssTransition = 'transform '+(duration/1000)+'s '+easing+', opacity '+(duration/1000)+'s '+easing;
+		setTransition(elem1, cssTransition);
+		setTransition(elem2, cssTransition);
+	}
+
+	function removeSwapperTransitions (elem1, elem2, duration, easing) {
+		setTransition(elem1, '');
+		setTransition(elem2, '');
+	}
+
+
+
+	function onTransitionEnd (elem1, elem2, styles1, styles2, transition, duration, callback) {
+		var transitionElem;
+
+		if ((styles2.display !== 'none') && (transition[0].fade || (transition[0].transform && transition[0].transform !== NO_TRANSFORM))) {
+			transitionElem = elem2;
+			bindCleanup();
+		}
+		else if ((styles1.display !== 'none') && (transition[1].fade || (transition[1].transform && transition[1].transform !== NO_TRANSFORM))) {
+			transitionElem = elem1;
+			bindCleanup();
+		}
+		else {
+			setTimeout(finish, duration);
+		}
+
 
 		function bindCleanup () {
-			transitionElem.addEventListener('webkitTransitionEnd' , cleanupElems , false);
-			transitionElem.addEventListener('transitionend'       , cleanupElems , false);
-			transitionElem.addEventListener('oTransitionEnd'      , cleanupElems , false);
-			transitionElem.addEventListener('otransitionend'      , cleanupElems , false);
-			transitionElem.addEventListener('MSTransitionEnd'     , cleanupElems , false);
-			transitionElem.addEventListener('transitionend'       , cleanupElems , false);
+			transitionElem.addEventListener('webkitTransitionEnd' , finish , false);
+			transitionElem.addEventListener('transitionend'       , finish , false);
+			transitionElem.addEventListener('oTransitionEnd'      , finish , false);
+			transitionElem.addEventListener('otransitionend'      , finish , false);
+			transitionElem.addEventListener('MSTransitionEnd'     , finish , false);
+			transitionElem.addEventListener('transitionend'       , finish , false);
 		}
 
 		function unbindCleanup () {
-			transitionElem.removeEventListener('webkitTransitionEnd' , cleanupElems);
-			transitionElem.removeEventListener('transitionend'       , cleanupElems);
-			transitionElem.removeEventListener('oTransitionEnd'      , cleanupElems);
-			transitionElem.removeEventListener('otransitionend'      , cleanupElems);
-			transitionElem.removeEventListener('MSTransitionEnd'     , cleanupElems);
-			transitionElem.removeEventListener('transitionend'       , cleanupElems);
+			transitionElem.removeEventListener('webkitTransitionEnd' , finish);
+			transitionElem.removeEventListener('transitionend'       , finish);
+			transitionElem.removeEventListener('oTransitionEnd'      , finish);
+			transitionElem.removeEventListener('otransitionend'      , finish);
+			transitionElem.removeEventListener('MSTransitionEnd'     , finish);
+			transitionElem.removeEventListener('transitionend'       , finish);
 		}
 
-		function beginCleanupCounter () {
-			bindCleanup();
-		}
 
-		function cleanupElems () {
-			if (cleanUpLock) {
+		var locked = false;
+
+		function finish () {
+			if (locked) {
 				return;
 			}
-			cleanUpLock = true;
+			locked = true;
 
 			if (transitionElem) {
 				unbindCleanup();
 			}
 
-			removeNode(elem1);
-
-			setTransition(elem1, '');
-			setTransition(elem2, '');
-
-			setTimeout(function () {
-				setTransform(elem1, '');
-				setTransform(elem2, '');
-
-				if ( transition[0].fade ) {
-					elem2.style.opacity = styles2.opacity;
-				}
-
-				if ( transition[1].fade ) {
-					elem1.style.opacity = styles1.opacity;
-				}
-
-				elem2.style.position = styles2.position;
-				elem2.style.top      = styles2.top;
-				elem2.style.left     = styles2.left;
-				elem2.style.height   = styles2.height;
-				elem2.style.width    = styles2.width;
-
-				elem1._swapper = false;
-				elem2._swapper = false;
-
-				callback();
-			}, 0);
+			callback();
 		}
 	}
 
