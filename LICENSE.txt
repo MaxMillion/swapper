@@ -1,5 +1,5 @@
 /**
- * swapper.js v1.0.2
+ * swapper.js
  * UI navigation and transition utility
  * Copyright (c) 2012 Kik Interactive, http://kik.com
  * Released under the MIT license
