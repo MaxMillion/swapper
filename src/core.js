@@ -22,8 +22,7 @@ Swapper._swapper = function (os, isNode, isInDOM, insertBefore, insertAfter, rem
 		if (elem1._swapper) {
 			throw Error('elem1 is currently being swapped');
 		}
-
-		if (elem2._swapper) {
+		else if (elem2._swapper) {
 			throw Error('elem2 is currently being swapped');
 		}
 
@@ -54,7 +53,6 @@ Swapper._swapper = function (os, isNode, isInDOM, insertBefore, insertAfter, rem
 		}
 
 
-
 		var transition = transitions[options.transition || DEFAULT_TRANSITION],
 			easing     = easings[options.easing || DEFAULT_EASING],
 			duration   = options.duration || 300;
@@ -67,13 +65,11 @@ Swapper._swapper = function (os, isNode, isInDOM, insertBefore, insertAfter, rem
 			styles1         = getStyles(elem1, true),
 			styles2         = getStyles(elem2, true);
 
+		setInitialPosition(elem1, elem2, computedStyles1, computedStyles2);
+
 		if ( transition[2] ) {
 			insertBefore(elem2, elem1);
 		}
-
-		setInitialPosition(elem1, elem2, computedStyles1, computedStyles2);
-
-
 
 		setInitialTransforms(elem1, elem2, transition);
 
@@ -83,10 +79,9 @@ Swapper._swapper = function (os, isNode, isInDOM, insertBefore, insertAfter, rem
 			setTimeout(function () {
 				setFinalTransforms(elem1, elem2, transition);
 
-				onTransitionEnd(
-					elem1, elem2,
-					computedStyles1, computedStyles2,
-					transition, duration,
+				onTransitionEnd(elem1          , elem2          ,
+								computedStyles1, computedStyles2,
+								transition     , duration       ,
 					function () {
 						removeNode(elem1);
 
@@ -94,7 +89,6 @@ Swapper._swapper = function (os, isNode, isInDOM, insertBefore, insertAfter, rem
 
 						setTimeout(function () {
 							restoreTransforms(elem1, elem2, styles1, styles2, transition);
-
 							restorePosition(elem1, elem2, styles1, styles2);
 
 							callback();
@@ -119,12 +113,12 @@ Swapper._swapper = function (os, isNode, isInDOM, insertBefore, insertAfter, rem
 			else {
 				elem2.style.position = 'fixed';
 			}
-			elem2.style.top      = bounds.top  + 'px';
-			elem2.style.left     = bounds.left + 'px';
+			elem2.style.top  = bounds.top  + 'px';
+			elem2.style.left = bounds.left + 'px';
 		}
 
-		elem2.style.height   = styles2.height || styles1.height;
-		elem2.style.width    = styles2.width  || styles1.width;
+		elem2.style.height = styles2.height || styles1.height;
+		elem2.style.width  = styles2.width  || styles1.width ;
 	}
 
 	function restorePosition (elem1, elem2, styles1, styles2) {
@@ -151,7 +145,7 @@ Swapper._swapper = function (os, isNode, isInDOM, insertBefore, insertAfter, rem
 
 	function setFinalTransforms (elem1, elem2, transition) {
 		setTransform(elem1, transition[1].transform || NO_TRANSFORM);
-		setTransform(elem2, NO_TRANSFORM );
+		setTransform(elem2, NO_TRANSFORM);
 
 		if ( transition[0].fade ) {
 			elem2.style.opacity = '1';
@@ -177,7 +171,8 @@ Swapper._swapper = function (os, isNode, isInDOM, insertBefore, insertAfter, rem
 
 
 	function setSwapperTransitions (elem1, elem2, duration, easing) {
-		var cssTransition = 'transform '+(duration/1000)+'s '+easing+', opacity '+(duration/1000)+'s '+easing;
+		var cssTransition = 'transform ' + (duration/1000) + 's ' + easing + ','
+							+ 'opacity ' + (duration/1000) + 's ' + easing;
 		setTransition(elem1, cssTransition);
 		setTransition(elem2, cssTransition);
 	}
@@ -189,14 +184,35 @@ Swapper._swapper = function (os, isNode, isInDOM, insertBefore, insertAfter, rem
 
 
 
-	function onTransitionEnd (elem1, elem2, styles1, styles2, transition, duration, callback) {
+	function willFireTransitionEnd (styles, transition) {
+		if (styles.display === 'none') {
+			return false;
+		}
+
+		if (transition.fade) {
+			return true;
+		}
+
+		if ( !transition.transform ) {
+			return false;
+		}
+		else if (transition.transform === NO_TRANSFORM) {
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+
+	function onTransitionEnd (elem1, elem2, styles1, styles2,
+								transition, duration, callback) {
 		var transitionElem;
 
-		if ((styles2.display !== 'none') && (transition[0].fade || (transition[0].transform && transition[0].transform !== NO_TRANSFORM))) {
+		if ( willFireTransitionEnd(styles2, transition[0]) ) {
 			transitionElem = elem2;
 			bindCleanup();
 		}
-		else if ((styles1.display !== 'none') && (transition[1].fade || (transition[1].transform && transition[1].transform !== NO_TRANSFORM))) {
+		else if ( willFireTransitionEnd(styles1, transition[1]) ) {
 			transitionElem = elem1;
 			bindCleanup();
 		}

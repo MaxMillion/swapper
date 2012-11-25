@@ -142,10 +142,22 @@
 				var currentPage = 1;
 
 				wrap.click(function () {
-					var transType   = trans.val(),
-						transitions = TRANSITIONS[transType];
+					addOverflow();
 
-					switch (transType) {
+					var transitions = TRANSITIONS[ trans.val() ];
+
+					if (currentPage === 1) {
+						page1.swapper(page2, transitions[0], removeOverflow);
+						currentPage = 2;
+					}
+					else {
+						page2.swapper(page1, transitions[1], removeOverflow);
+						currentPage = 1;
+					}
+				});
+
+				function addOverflow () {
+					switch ( trans.val() ) {
 						case 'up-down':
 						case 'left-right':
 						case 'slideon-left':
@@ -158,16 +170,7 @@
 						case 'slideoff-down':
 							wrap.addClass('overflow');
 					}
-
-					if (currentPage === 1) {
-						currentPage = 2;
-						page1.swapper(page2, transitions[0], removeOverflow);
-					}
-					else {
-						currentPage = 1;
-						page2.swapper(page1, transitions[1], removeOverflow);
-					}
-				});
+				}
 
 				function removeOverflow () {
 					wrap.removeClass('overflow');
