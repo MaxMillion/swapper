@@ -128,12 +128,12 @@ Swapper._transitions = {
 		true
 	],
 	'glideon-right' : [
-		{ transform : 'translate3d(100%,0,0)' },
+		{ transform : 'translate3d(110%,0,0)' },
 		{ transform : 'translate3d(-20%,0,0)' }
 	],
 	'glideoff-right' : [
 		{ transform : 'translate3d(-20%,0,0)' },
-		{ transform : 'translate3d(100%,0,0)' },
+		{ transform : 'translate3d(110%,0,0)' },
 		true
 	]
 };
