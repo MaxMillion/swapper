@@ -146,6 +146,11 @@ Swapper._getStyles = function (document) {
 		}
 
 		return {
+			'-webkit-transition' : styles['-webkit-transition'] ,
+			   '-moz-transition' : styles[   '-moz-transition'] ,
+			    '-ms-transition' : styles[    '-ms-transition'] ,
+			     '-o-transition' : styles[     '-o-transition'] ,
+			        'transition' : styles[        'transition'] ,
 			display  : styles.display  ,
 			opacity  : styles.opacity  ,
 			top      : styles.top      ,

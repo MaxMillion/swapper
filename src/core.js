@@ -71,30 +71,38 @@ Swapper._swapper = function (os, isNode, isInDOM, insertBefore, insertAfter, rem
 			insertBefore(elem2, elem1);
 		}
 
-		setInitialTransforms(elem1, elem2, transition);
+		setInitialTransitions(elem1, elem2);
 
 		setTimeout(function () {
-			setSwapperTransitions(elem1, elem2, duration, easing);
+			setInitialTransforms(elem1, elem2, transition);
 
 			setTimeout(function () {
-				setFinalTransforms(elem1, elem2, transition);
+				setSwapperTransitions(elem1, elem2, duration, easing);
 
-				onTransitionEnd(elem1          , elem2          ,
-								computedStyles1, computedStyles2,
-								transition     , duration       ,
-					function () {
-						removeNode(elem1);
+				setTimeout(function () {
+					setFinalTransforms(elem1, elem2, transition);
 
-						removeSwapperTransitions(elem1, elem2, duration, easing);
+					onTransitionEnd(elem1          , elem2          ,
+									computedStyles1, computedStyles2,
+									transition     , duration       ,
+						function () {
+							removeNode(elem1);
 
-						setTimeout(function () {
-							restoreTransforms(elem1, elem2, styles1, styles2, transition);
-							restorePosition(elem1, elem2, styles1, styles2);
+							removeSwapperTransitions(elem1, elem2, duration, easing);
 
-							callback();
-						}, 0);
-					}
-				);
+							setTimeout(function () {
+								restoreTransforms(elem1, elem2, styles1, styles2, transition);
+								restorePosition(elem1, elem2, styles1, styles2);
+
+								setTimeout(function () {
+									restoreTransitions(elem1, elem2, styles1, styles2);
+
+									callback();
+								}, 0);
+							}, 0);
+						}
+					);
+				}, 0);
 			}, 0);
 		}, 0);
 	}
@@ -180,6 +188,26 @@ Swapper._swapper = function (os, isNode, isInDOM, insertBefore, insertAfter, rem
 	function removeSwapperTransitions (elem1, elem2, duration, easing) {
 		setTransition(elem1, '');
 		setTransition(elem2, '');
+	}
+
+
+
+	function setInitialTransitions (elem1, elem2) {
+		setTransition(elem1, '');
+		setTransition(elem2, '');
+	}
+
+	function restoreTransitions (elem1, elem2, styles1, styles2) {
+		elem1.style['-webkit-transition'] = styles1['-webkit-transition'];
+		elem1.style[   '-moz-transition'] = styles1[   '-moz-transition'];
+		elem1.style[    '-ms-transition'] = styles1[    '-ms-transition'];
+		elem1.style[     '-o-transition'] = styles1[     '-o-transition'];
+		elem1.style[        'transition'] = styles1[        'transition'];
+		elem2.style['-webkit-transition'] = styles2['-webkit-transition'];
+		elem2.style[   '-moz-transition'] = styles2[   '-moz-transition'];
+		elem2.style[    '-ms-transition'] = styles2[    '-ms-transition'];
+		elem2.style[     '-o-transition'] = styles2[     '-o-transition'];
+		elem2.style[        'transition'] = styles2[        'transition'];
 	}
 
 
