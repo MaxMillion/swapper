@@ -75,7 +75,7 @@ Swapper._swapper = function (os, isNode, isInDOM, insertBefore, insertAfter, rem
 		setInitialTransitions(elem1, elem2);
 
 		setTimeout(function () {
-			elem2.style.display = computedStyles2.opacity;
+			elem2.style.opacity = computedStyles2.opacity;
 			setInitialTransforms(elem1, elem2, transition);
 
 			setTimeout(function () {
