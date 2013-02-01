@@ -71,11 +71,11 @@ Swapper._swapper = function (os, isNode, isInDOM, insertBefore, insertAfter, rem
 			insertBefore(elem2, elem1);
 		}
 
-		elem2.style.display = 'none';
+		elem2.style.opacity = '0';
 		setInitialTransitions(elem1, elem2);
 
 		setTimeout(function () {
-			elem2.style.display = computedStyles2.display;
+			elem2.style.display = computedStyles2.opacity;
 			setInitialTransforms(elem1, elem2, transition);
 
 			setTimeout(function () {
