@@ -144,5 +144,23 @@ Swapper._transitions = {
 		{ transform : 'translate3d(20%,0,0)'   },
 		{ transform : 'translate3d(-110%,0,0)' },
 		true
+	],
+	'glideon-down' : [
+		{ transform : 'translate3d(0,110%,0)' },
+		{ transform : 'translate3d(0,-20%,0)' }
+	],
+	'glideoff-down' : [
+		{ transform : 'translate3d(0,-20%,0)' },
+		{ transform : 'translate3d(0,110%,0)' },
+		true
+	],
+	'glideon-up' : [
+		{ transform : 'translate3d(0,-110%,0)' },
+		{ transform : 'translate3d(0,20%,0)' }
+	],
+	'glideoff-up' : [
+		{ transform : 'translate3d(0,20%,0)' },
+		{ transform : 'translate3d(0,-110%,0)' },
+		true
 	]
 };
