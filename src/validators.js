@@ -62,7 +62,7 @@ Swapper._validate = function (isNode, transitions, easings) {
 
 		switch (typeof options.easing) {
 			case 'string':
-				if ( !(options.easing in easings) ) {
+				if (!(options.easing in easings) && (options.easing.substr(0,13) !== 'cubic-bezier(')) {
 					throw TypeError(options.easing + ' is not a valid easing');
 				}
 				break;
