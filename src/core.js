@@ -54,8 +54,12 @@ Swapper._swapper = function (os, isNode, isInDOM, insertBefore, insertAfter, rem
 
 
 		var transition = transitions[options.transition || DEFAULT_TRANSITION],
-			easing     = easings[options.easing || DEFAULT_EASING],
+			easing     = options.easing || DEFAULT_EASING,
 			duration   = options.duration || 300;
+
+		if (easing.substr(0,13) !== 'cubic-bezier(') {
+			easing = easings[easing];
+		}
 
 		// do this first to get accurate style readings
 		insertAfter(elem2, elem1);
