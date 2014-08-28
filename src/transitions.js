@@ -127,6 +127,15 @@ Swapper._transitions = {
 		{ transform : 'translate3d(0,100%,0)' },
 		true
 	],
+	'slideon-left-ios' : [
+		{ transform : 'translate3d(100%,0,0)' },
+		{ transform : 'translate3d(-30%,0,0)' }
+	],
+	'slideoff-right-ios' : [
+		{ transform : 'translate3d(-30%,0,0)' },
+		{ transform : 'translate3d(100%,0,0)' },
+		true
+	],
 	'glideon-right' : [
 		{ transform : 'translate3d(110%,0,0)' },
 		{ transform : 'translate3d(-20%,0,0)' }
