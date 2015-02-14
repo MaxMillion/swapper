@@ -110,7 +110,7 @@ Swapper._swapper = function (os, isNode, isInDOM, insertBefore, insertAfter, rem
 					);
 				}, 0);
 			}, 0);
-		}, 0);
+		}, 25);
 	}
 
 
