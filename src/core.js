@@ -277,7 +277,7 @@ Swapper._swapper = function (os, isNode, isInDOM, insertBefore, insertAfter, rem
 		var locked = false;
 
 		function finish (e) {
-			if (locked || (e && e.target && (e.target !== transitionElem))) {
+			if (locked || !e || !e.target || (e.target !== transitionElem)) {
 				return;
 			}
 			locked = true;
