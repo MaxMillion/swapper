@@ -173,12 +173,12 @@ Swapper._transitions = {
 		true
 	],
 	'android-l-in' : [
-		{ transform : 'translate3d(0,9%,0)', fade : true },
+		{ transform : 'translate3d(0,6%,0)', fade : true },
 		{}
 	],
 	'android-l-out' : [
 		{},
-		{ transform : 'translate3d(0,9%,0)', fade : true },
+		{ transform : 'translate3d(0,6%,0)', fade : true },
 		true
 	]
 };
