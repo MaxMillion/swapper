@@ -109,7 +109,7 @@ Swapper._swapper = function (os, isNode, isInDOM, insertBefore, insertAfter, rem
 						}
 					);
 				}, 0);
-			}, os.android ? 50 : 0);
+			}, 50);
 		}, 0);
 	}
 
